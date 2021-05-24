@@ -1,0 +1,7 @@
+# Gradle
+.gradle
+gradle/wrapper
+build
+
+input
+disl_libs

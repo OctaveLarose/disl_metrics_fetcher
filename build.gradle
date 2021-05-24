@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'application'
+    id 'idea'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+//dependencies {
+//    implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.20.2'
+//    implementation group: 'com.github.javaparser', name: 'javaparser-symbol-solver-core', version: '3.20.2'
+//    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+//}
+
+group = 'groupId'
+version = '1.0-SNAPSHOT'
+description = 'disl_metrics_fetcher'
+java.sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+mainClassName = 'com.github.octavelarose.disl_metrics_fetcher.Main'
