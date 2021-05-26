@@ -10,6 +10,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/src-inst" />
+            <option value="$PROJECT_DIR$/src-sample-app" />
           </set>
         </option>
       </GradleProjectSettings>

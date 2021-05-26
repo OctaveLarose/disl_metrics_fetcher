@@ -3,5 +3,7 @@
 gradle/wrapper
 build
 
+*build/
+bin
 input
-disl_libs
+src-inst/disl_libs

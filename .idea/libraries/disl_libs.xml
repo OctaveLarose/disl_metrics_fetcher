@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="disl_libs">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/src-inst/disl_libs" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://$PROJECT_DIR$/src-inst/disl_libs" />
+    </NATIVE>
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/src-inst/disl_libs" recursive="false" />
+  </library>
+</component>
