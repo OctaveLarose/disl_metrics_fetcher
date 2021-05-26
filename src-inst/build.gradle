@@ -20,6 +20,13 @@ dependencies {
     implementation files('disl_libs/disl-server.jar')
 }
 
+jar {
+    manifest {
+        attributes "Manifest-Version": "1.0"
+        attributes "DiSL-Classes": "DiSLClass"
+    }
+}
+
 description = 'disl_metrics_fetcher'
 java.sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

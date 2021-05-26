@@ -12,9 +12,18 @@ repositories {
     }
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "main.Main"
+    }
+}
+
 description = 'Sample app for DISL testing purposes'
-java.sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

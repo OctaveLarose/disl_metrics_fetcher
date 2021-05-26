@@ -1,5 +1,3 @@
-package java.com.github.octavelarose.disl_metrics_fetcher;
-
 import ch.usi.dag.disl.annotation.After;
 import ch.usi.dag.disl.dynamiccontext.DynamicContext;
 import ch.usi.dag.disl.marker.BodyMarker;
