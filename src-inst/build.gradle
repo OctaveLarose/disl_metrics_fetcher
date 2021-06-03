@@ -18,6 +18,14 @@ configurations {
 
 dependencies {
     implementation files('disl_libs/disl-server.jar')
+    implementation files('disl_libs/dislre-server.jar') // Not sure those last two are useful
+    implementation files('disl_libs/dislre-dispatch.jar')
+//    implementation files('disl_libs/asm.jar')
+//    implementation files('disl_libs/asm-analysis.jar')
+//    implementation files('disl_libs/asm-commons.jar')
+//    implementation files('disl_libs/asm-tree.jar')
+//    implementation files('disl_libs/asm-util.jar')
+//    implementation files('disl_libs/disl-bypass.jar')
 }
 
 jar {
@@ -28,8 +36,11 @@ jar {
 }
 
 description = 'disl_metrics_fetcher'
-java.sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
