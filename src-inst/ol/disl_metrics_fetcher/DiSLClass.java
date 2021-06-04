@@ -1,17 +1,11 @@
-import ch.usi.dag.disl.annotation.After;
-import ch.usi.dag.disl.annotation.Before;
-import ch.usi.dag.disl.annotation.GuardMethod;
-import ch.usi.dag.disl.annotation.SyntheticLocal;
-import ch.usi.dag.disl.dynamiccontext.DynamicContext;
+import ch.usi.dag.disl.annotation.*;
+import ch.usi.dag.disl.annotation.ThreadLocal;
 import ch.usi.dag.disl.marker.BodyMarker;
 import ch.usi.dag.disl.staticcontext.MethodStaticContext;
-import disl_metrics_fetcher.MethodInvocationMarker;
+import disl_metrics_fetcher.MethodStaticContextPrinter;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class DiSLClass {
 
@@ -53,11 +47,10 @@ public class DiSLClass {
 
 //    @Before (marker=BodyMarker.class, scope = "[default].*.*(..)")
     @Before (marker=BodyMarker.class, guard = TestGuard.class)
-    static void conMethodEntry(MethodStaticContext msc) {
+    static void conMethodEntry(MethodStaticContextPrinter mscp) {
         try {
             entryTime = System.nanoTime();
-            String methodEntryStr = "> " + msc.thisMethodDescriptor() + " " + msc.thisMethodFullName() + "\n";
-            methodLogFile.write(methodEntryStr);
+            methodLogFile.write(mscp.getMethodEntryStr());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,14 +58,9 @@ public class DiSLClass {
 
     //    @Before (marker=BodyMarker.class, scope = "[default].*.*(..)")
     @After (marker=BodyMarker.class, guard = TestGuard.class)
-    static void conMethodExit(MethodStaticContext msc) {
+    static void conMethodExit(MethodStaticContextPrinter mscp) {
         try {
-            String methodExitStr = "< "
-                    + msc.thisMethodDescriptor() + " "
-                    + msc.thisMethodFullName() + " "
-                    + "(" + (System.nanoTime() - entryTime) + " ns)"
-                    + "\n";
-            methodLogFile.write(methodExitStr);
+            methodLogFile.write(mscp.getMethodExitStr());
             methodLogFile.close();
         } catch (IOException e) {
             e.printStackTrace();
