@@ -23,7 +23,7 @@ public class DiSLClass {
 
     static {
         try {
-            methodLogFile = new FileWriter("methodLogFile.txt", true);
+            methodLogFile = new FileWriter("calltrace.txt", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +56,8 @@ public class DiSLClass {
     static void conMethodEntry(MethodStaticContext msc) {
         try {
             entryTime = System.nanoTime();
-            methodLogFile.write("> " + msc.thisMethodFullName() + "\n");
+            String methodEntryStr = "> " + msc.thisMethodDescriptor() + " " + msc.thisMethodFullName() + "\n";
+            methodLogFile.write(methodEntryStr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,10 +67,12 @@ public class DiSLClass {
     @After (marker=BodyMarker.class, guard = TestGuard.class)
     static void conMethodExit(MethodStaticContext msc) {
         try {
-            methodLogFile.write(
-                    "< " + msc.thisMethodFullName() + " "
+            String methodExitStr = "< "
+                    + msc.thisMethodDescriptor() + " "
+                    + msc.thisMethodFullName() + " "
                     + "(" + (System.nanoTime() - entryTime) + " ns)"
-                    + "\n");
+                    + "\n";
+            methodLogFile.write(methodExitStr);
             methodLogFile.close();
         } catch (IOException e) {
             e.printStackTrace();
