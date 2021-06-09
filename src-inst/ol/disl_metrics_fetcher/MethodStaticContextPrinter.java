@@ -27,7 +27,6 @@ public class MethodStaticContextPrinter extends MethodStaticContext
         return this.getMethodScope()
                 + " "
                 + this.thisMethodDescriptor() + " "
-                + this.thisMethodFullName()
-                + "\n";
+                + this.thisMethodFullName();
     }
 }
