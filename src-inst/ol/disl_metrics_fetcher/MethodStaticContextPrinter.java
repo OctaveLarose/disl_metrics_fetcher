@@ -4,15 +4,33 @@ import ch.usi.dag.disl.staticcontext.MethodStaticContext;
 
 public class MethodStaticContextPrinter extends MethodStaticContext
 {
-    // could include static, synchronized, etc.
+    public String scopeConcat(String scope, String toConcat) {
+        if (scope.equals(""))
+            return toConcat;
+        else
+            return scope.concat("/").concat(toConcat);
+    }
+
+    // could include synchronized, etc.
     public String getMethodScope() {
+        String methodScope = "";
+
         if (this.isMethodPublic())
-            return "pub";
+            methodScope = scopeConcat(methodScope, "pub");
         if (this.isMethodPrivate())
-            return "pri";
+            methodScope = scopeConcat(methodScope, "pri");
         if (this.isMethodProtected())
-            return "pro";
-        return "?";
+            methodScope = scopeConcat(methodScope, "pro");
+        if (this.isMethodConstructor())
+            methodScope = scopeConcat(methodScope, "con");
+        if (this.isMethodStatic())
+            methodScope = scopeConcat(methodScope, "sta");
+        if (this.isMethodFinal())
+            methodScope = scopeConcat(methodScope, "fin");
+        if (this.isMethodSynchronized())
+            methodScope = scopeConcat(methodScope, "syn");
+
+        return !methodScope.equals("") ? methodScope : "?";
     }
 
     public String getMethodEntryStr() {
