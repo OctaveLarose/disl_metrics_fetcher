@@ -2,8 +2,7 @@ import ch.usi.dag.disl.annotation.*;
 import ch.usi.dag.disl.dynamiccontext.DynamicContext;
 import ch.usi.dag.disl.marker.BodyMarker;
 import ch.usi.dag.disl.staticcontext.MethodStaticContext;
-import disl_metrics_fetcher.MethodInstructionsContext;
-import disl_metrics_fetcher.MethodStaticContextPrinter;
+import disl_metrics_fetcher.helpers.MethodStaticContextPrinter;
 
 import java.io.FileWriter;
 import java.io.IOException;

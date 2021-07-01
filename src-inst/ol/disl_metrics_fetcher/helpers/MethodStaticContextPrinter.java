@@ -1,4 +1,4 @@
-package disl_metrics_fetcher;
+package disl_metrics_fetcher.helpers;
 
 import ch.usi.dag.disl.staticcontext.MethodStaticContext;
 

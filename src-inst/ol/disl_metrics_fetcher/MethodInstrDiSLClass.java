@@ -37,11 +37,11 @@ public class MethodInstrDiSLClass {
 //        }
 //    }
 
-    @After(marker = BodyMarker.class, scope = "Harness.main")
-    public static void afterInstance(DynamicContext di) {
-        Object o = di.getThis();
-        System.out.println("disl: this=" + o.toString());
-    }
+//    @After(marker = BodyMarker.class, scope = "Harness.main")
+//    public static void afterInstance(DynamicContext di) {
+//        Object o = di.getThis();
+//        System.out.println("disl: this=" + o.toString());
+//    }
 
 //    @After(marker = BodyMarker.class, scope = "[default].*.*(..)")
 //    public static void afterException(DynamicContext di) {
