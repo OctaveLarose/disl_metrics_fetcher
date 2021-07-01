@@ -1,53 +1,15 @@
-import ch.usi.dag.disl.annotation.*;
+import ch.usi.dag.disl.annotation.After;
+import ch.usi.dag.disl.annotation.Before;
+import ch.usi.dag.disl.annotation.GuardMethod;
+import ch.usi.dag.disl.annotation.SyntheticLocal;
 import ch.usi.dag.disl.dynamiccontext.DynamicContext;
 import ch.usi.dag.disl.marker.BodyMarker;
 import ch.usi.dag.disl.staticcontext.MethodStaticContext;
-import disl_metrics_fetcher.MethodInstructionsContext;
-import disl_metrics_fetcher.MethodStaticContextPrinter;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class DiSLClass {
-
-    @SyntheticLocal
-    static long entryTime;
-
-    @SyntheticLocal
-    static FileWriter logFile;
-
-    static {
-        try {
-            logFile = new FileWriter("logfile.txt", true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
-    static void conMethodEntry(MethodStaticContextPrinter mscp) {
-        try {
-            entryTime = System.nanoTime();
-            logFile.write(mscp.getMethodEntryStr() + "\n");
-            logFile.flush();
-//            System.out.println(mscp.getMethodEntryStr() + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @After (marker=BodyMarker.class, guard = NonDefaultGuard.class)
-    static void conMethodExit(MethodStaticContextPrinter mscp) {
-        try {
-            logFile.write(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)\n");
-            logFile.flush();
-//        System.out.println(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)\n");
-            logFile.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+public class MethodInstrDiSLClass {
 
 //    @Before (marker=BodyMarker.class, guard = TestGuard.class)
 //    @After(marker= BodyMarker.class, guard = NonDefaultGuard.class)
@@ -75,11 +37,11 @@ public class DiSLClass {
 //        }
 //    }
 
-//    @After(marker = BodyMarker.class, scope = "Main.testInstance")
-//    public static void afterInstance(DynamicContext di) {
-//        Object o = di.getThis();
-//        System.out.println("disl: this=" + o.toString());
-//    }
+    @After(marker = BodyMarker.class, scope = "Harness.main")
+    public static void afterInstance(DynamicContext di) {
+        Object o = di.getThis();
+        System.out.println("disl: this=" + o.toString());
+    }
 
 //    @After(marker = BodyMarker.class, scope = "[default].*.*(..)")
 //    public static void afterException(DynamicContext di) {
