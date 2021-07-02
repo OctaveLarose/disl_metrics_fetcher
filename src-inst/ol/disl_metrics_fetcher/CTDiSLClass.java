@@ -34,10 +34,10 @@ public class CTDiSLClass {
 //        }
 //    }
 
-    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
-    static void conMethodEntryPrint(MethodStaticContextPrinter mscp) {
-        System.out.println(mscp.getMethodEntryStr() + "\n");
-    }
+//    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
+//    static void conMethodEntryPrint(MethodStaticContextPrinter mscp) {
+//        System.out.println(mscp.getMethodEntryStr() + "\n");
+//    }
 
 
 
@@ -52,10 +52,10 @@ public class CTDiSLClass {
 //        }
 //    }
 
-    @After (marker=BodyMarker.class, guard = NonDefaultGuard.class)
-    static void conMethodExitPrint(MethodStaticContextPrinter mscp) {
-        System.out.println(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)\n");
-    }
+//    @After (marker=BodyMarker.class, guard = NonDefaultGuard.class)
+//    static void conMethodExitPrint(MethodStaticContextPrinter mscp) {
+//        System.out.println(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)\n");
+//    }
 
     public static final class NonDefaultGuard {
         @GuardMethod

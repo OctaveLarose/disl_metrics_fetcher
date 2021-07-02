@@ -10,82 +10,82 @@ import java.util.List;
 
 
 public class MethodInstructionsContext extends AbstractStaticContext {
-    public String getTotalLocalVarsStr() {
+    public String getMethodInstrInfoStr() {
         MethodNode method = staticContextData.getMethodNode();
 
-        return JavaNames.methodName(staticContextData.getClassNode().name, method.name)
-                + " "
-                + (method.maxLocals - 1)
-                + "\n";
+//        System.err.println(staticContextData.getClassNode().interfaces);
+//        System.err.println(staticContextData.getClassNode().superName);
 
-//        System.out.println("---START---");
-//        System.out.println("NAME: " + method.name);
-//        System.out.println("MAXLOCALS: " + method.maxLocals);
-//        System.out.println("MAXSTACK " + method.maxStack);
-//        System.out.println("LOCAL VARS ARRAY: " + method.localVariables);
-//        for (final LocalVariableNode local : method.localVariables) {
-//            System.out.println("Local var: " + local.name + " : " + local.desc + " : " + local.signature + " : " + local.index);
-//        }
-//        System.out.println("---END---\n");
+        return  "---\n"
+                + JavaNames.methodName(staticContextData.getClassNode().name, method.name) + "\n"
+                + "VARS NBR: " + this.getNbrLocalVars() + "\n"
+                + "LOOPS NBR: " + this.getLoopsNbr() + "\n"
+                + "---";
     }
 
-    public String getLoopsNbrStr() {
+    public int getLoopsNbr() {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
         int loopsNbr = 0;
-        System.out.println("---START---");
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
 
+            // Note: also used for try/catch blocks, I believe, so not entirely accurate?
             if (instruction.getOpcode() == Opcodes.GOTO) {
                 loopsNbr++;
             }
-
-            if (instruction instanceof VarInsnNode) {
-                VarInsnNode varInstr = (VarInsnNode) instruction;
-
-                System.out.println(varInstr.var);
-            }
-//
-//            if (instruction instanceof LdcInsnNode) {
-//                System.out.println("---LDC INSN START---");
-//                System.out.println(("LDC: " + ((LdcInsnNode) instruction).cst));
-//                System.out.println(("LDC: " + ((LdcInsnNode) instruction).getType()));
-////                System.out.println(("LDC: " + ((LdcInsnNode) instruction).getOpcode()));
-//                System.out.println("---LDC INSN END---");
-//            }
-////            if (instruction instanceof MethodInsnNode) {
-////                System.out.println("---METHOD INSN START---");
-////                System.out.println(((MethodInsnNode) instruction).name);
-////                System.out.println(((MethodInsnNode) instruction).owner);
-////                System.out.println(((MethodInsnNode) instruction).desc);
-////                System.out.println(((MethodInsnNode) instruction).itf
-// );
-////                System.out.println("---METHOD INSN END---");
-////            }
         }
 
-        System.out.println("---END---");
-
-        return JavaNames.methodName(staticContextData.getClassNode().name, method.name)
-                + " "
-                + loopsNbr
-                + "\n";
+        return loopsNbr;
     }
+
+    public int getNbrLocalVars() {
+        MethodNode method = staticContextData.getMethodNode();
+        InsnList insList = method.instructions;
+        int varsNbr = 0;
+
+        return (method.maxLocals - 1);
+
+//        for (int i = 0; i < insList.size(); i++) {
+//            AbstractInsnNode instruction = ;
+//            if (insList.get(i) instanceof VarInsnNode)
+//                varsNbr++;
+//        }
+//        return varsNbr;
+    }
+
 
     public int fuckaround() {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
 
-        System.out.println("---METHOD " + method.name + " START---");
-        System.out.println("MAXLOCALS: " + method.maxLocals);
+        System.err.println("---METHOD " + method.name + " START---");
+        System.err.println("MAXLOCALS: " + method.maxLocals);
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
-            System.out.println(instruction.getOpcode());
+            System.err.println(instruction.getOpcode());
+
+            if (instruction instanceof LdcInsnNode) {
+                System.err.println("---LDC INSN START---");
+                System.err.println(("LDC: " + ((LdcInsnNode) instruction).cst));
+                System.err.println(("LDC: " + instruction.getType()));
+                System.err.println(("LDC: " + instruction.getOpcode()));
+                System.err.println("---LDC INSN END---");
+            }
+
+            if (instruction instanceof MethodInsnNode) {
+                System.err.println("---METHOD INSN START---");
+                System.err.println(((MethodInsnNode) instruction).name);
+                System.err.println(((MethodInsnNode) instruction).owner);
+                System.err.println(((MethodInsnNode) instruction).desc);
+                System.err.println(((MethodInsnNode) instruction).itf);
+                System.err.println("---METHOD INSN END---");
+            }
+
         }
-        System.out.println("---METHOD END---");
+        System.err.println("---METHOD END---");
 
         return 0;
     }
