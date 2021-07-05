@@ -34,6 +34,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
             AbstractInsnNode instruction = insList.get(i);
 
             // Note: also used for try/catch blocks, I believe, so not entirely accurate?
+            // TODO: how about only counting GOTOs to previous instructions
             if (instruction.getOpcode() == Opcodes.GOTO) {
                 loopsNbr++;
             }
@@ -56,18 +57,22 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         // if "L", then it's an object with the full type following, and we assume the full type contains one single capital letter
         int nbrParams = (int) paramsStr.chars().filter(a -> ((a >= 'A') && (a <= 'Z'))).count() -
                         (int) paramsStr.chars().filter(a -> a == 'L').count();
-
+        System.err.println(nbrParams);
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instr = insList.get(i);
-            if (instr instanceof VarInsnNode)
+            // We count store accesses, but maybe most JVM implementations remove unused variables and thus this is inaccurate? Probably not?
+            // Doesn't account for exceptions and probably some other cases. TODO check Run.runBenchmark()
+            if ((Opcodes.ISTORE <= instr.getOpcode()) && (instr.getOpcode() <= Opcodes.SASTORE))
                 varIdAccesses.add(((VarInsnNode) instr).var);
         }
 
 //        System.err.println(method.attrs);
 //        System.err.println(method.parameters);
 //        System.err.println(method.desc);
-        return varIdAccesses.size() - nbrParams;
+
+        // When there are no store calls and there are params, it can be negative
+        return Math.max(0, varIdAccesses.size() - nbrParams);
     }
 
 
