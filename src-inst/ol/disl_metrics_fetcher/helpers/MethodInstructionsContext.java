@@ -6,7 +6,9 @@ import org.objectweb.asm.tree.*;
 
 import ch.usi.dag.disl.staticcontext.AbstractStaticContext;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class MethodInstructionsContext extends AbstractStaticContext {
@@ -43,16 +45,29 @@ public class MethodInstructionsContext extends AbstractStaticContext {
     public int getNbrLocalVars() {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
-        int varsNbr = 0;
+        Set<Integer> varIdAccesses = new HashSet<>();
 
-        return (method.maxLocals - 1);
+        // The quick and easy method, but inaccurate since returns the max locals list size, not accounting for bigger types like double
+        // return method.maxLocals;
 
-//        for (int i = 0; i < insList.size(); i++) {
-//            AbstractInsnNode instruction = ;
-//            if (insList.get(i) instanceof VarInsnNode)
-//                varsNbr++;
-//        }
-//        return varsNbr;
+        String paramsStr = method.desc.substring(1, method.desc.indexOf(')'));
+
+        // method.params is null for some reason so here's an ugly hack from the method description string
+        // if "L", then it's an object with the full type following, and we assume the full type contains one single capital letter
+        int nbrParams = (int) paramsStr.chars().filter(a -> ((a >= 'A') && (a <= 'Z'))).count() -
+                        (int) paramsStr.chars().filter(a -> a == 'L').count();
+
+
+        for (int i = 0; i < insList.size(); i++) {
+            AbstractInsnNode instr = insList.get(i);
+            if (instr instanceof VarInsnNode)
+                varIdAccesses.add(((VarInsnNode) instr).var);
+        }
+
+//        System.err.println(method.attrs);
+//        System.err.println(method.parameters);
+//        System.err.println(method.desc);
+        return varIdAccesses.size() - nbrParams;
     }
 
 
@@ -60,29 +75,34 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
 
-        System.err.println("---METHOD " + method.name + " START---");
+        System.err.println("---METHOD " + staticContextData.getClassNode().name + "." + method.name + " START---");
         System.err.println("MAXLOCALS: " + method.maxLocals);
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
-            System.err.println(instruction.getOpcode());
+//            System.err.println(instruction.getOpcode());
+//            System.err.println("INSTR: " + instruction);
 
-            if (instruction instanceof LdcInsnNode) {
-                System.err.println("---LDC INSN START---");
-                System.err.println(("LDC: " + ((LdcInsnNode) instruction).cst));
-                System.err.println(("LDC: " + instruction.getType()));
-                System.err.println(("LDC: " + instruction.getOpcode()));
-                System.err.println("---LDC INSN END---");
+            if (instruction instanceof VarInsnNode) {
+//                System.err.println("Var insn node:" + ((VarInsnNode) instruction).var);
+//                System.err.println("OP:" + instruction.getOpcode());
+                System.err.println(instruction.getOpcode());
             }
-
-            if (instruction instanceof MethodInsnNode) {
-                System.err.println("---METHOD INSN START---");
-                System.err.println(((MethodInsnNode) instruction).name);
-                System.err.println(((MethodInsnNode) instruction).owner);
-                System.err.println(((MethodInsnNode) instruction).desc);
-                System.err.println(((MethodInsnNode) instruction).itf);
-                System.err.println("---METHOD INSN END---");
-            }
+//                System.err.println("---LDC INSN START---");
+//                System.err.println(("LDC: " + ((LdcInsnNode) instruction).cst));
+//                System.err.println(("LDC: " + instruction.getType()));
+//                System.err.println(("LDC: " + instruction.getOpcode()));
+//                System.err.println("---LDC INSN END---");
+//            }
+//
+//            if (instruction instanceof MethodInsnNode) {
+//                System.err.println("---METHOD INSN START---");
+//                System.err.println(((MethodInsnNode) instruction).name);
+//                System.err.println(((MethodInsnNode) instruction).owner);
+//                System.err.println(((MethodInsnNode) instruction).desc);
+//                System.err.println(((MethodInsnNode) instruction).itf);
+//                System.err.println("---METHOD INSN END---");
+//            }
 
         }
         System.err.println("---METHOD END---");
