@@ -35,12 +35,27 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 
             // Note: also used for try/catch blocks, I believe, so not entirely accurate?
             // TODO: how about only counting GOTOs to previous instructions
+//            System.err.println(instruction);
             if (instruction.getOpcode() == Opcodes.GOTO) {
+//                if (insList.get(i + 1) instanceof LabelNode)
+//                    try {
+//                        System.err.println(((LabelNode) insList.get(i + 1)).getLabel().getOffset());
+//                    } catch (IllegalStateException e) {
+//                        ; //System.err.println("Illegal state.");
+//                    }
+//                System.err.println(((JumpInsnNode) instruction).label.getLabel().getOffset());
                 loopsNbr++;
             }
         }
 
         return loopsNbr;
+    }
+
+    public int getNbrParams(MethodNode method) {
+        String paramsStr = method.desc.substring(1, method.desc.indexOf(')'));
+
+        return (int) paramsStr.chars().filter(a -> ((a >= 'A') && (a <= 'Z'))).count() -
+                (int) paramsStr.chars().filter(a -> a == 'L').count();
     }
 
     public int getNbrLocalVars() {
@@ -51,13 +66,9 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         // The quick and easy method, but inaccurate since returns the max locals list size, not accounting for bigger types like double
         // return method.maxLocals;
 
-        String paramsStr = method.desc.substring(1, method.desc.indexOf(')'));
-
         // method.params is null for some reason so here's an ugly hack from the method description string
         // if "L", then it's an object with the full type following, and we assume the full type contains one single capital letter
-        int nbrParams = (int) paramsStr.chars().filter(a -> ((a >= 'A') && (a <= 'Z'))).count() -
-                        (int) paramsStr.chars().filter(a -> a == 'L').count();
-        System.err.println(nbrParams);
+
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instr = insList.get(i);
@@ -72,7 +83,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 //        System.err.println(method.desc);
 
         // When there are no store calls and there are params, it can be negative
-        return Math.max(0, varIdAccesses.size() - nbrParams);
+        return Math.max(0, varIdAccesses.size() - getNbrParams(method));
     }
 
 
@@ -88,11 +99,13 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 //            System.err.println(instruction.getOpcode());
 //            System.err.println("INSTR: " + instruction);
 
-            if (instruction instanceof VarInsnNode) {
+            if (instruction.getOpcode() == Opcodes.GETSTATIC)
+                System.err.println(instruction);
+//            if (instruction instanceof VarInsnNode) {
 //                System.err.println("Var insn node:" + ((VarInsnNode) instruction).var);
 //                System.err.println("OP:" + instruction.getOpcode());
-                System.err.println(instruction.getOpcode());
-            }
+//                System.err.println(instruction.getOpcode());
+//            }
 //                System.err.println("---LDC INSN START---");
 //                System.err.println(("LDC: " + ((LdcInsnNode) instruction).cst));
 //                System.err.println(("LDC: " + instruction.getType()));
@@ -111,6 +124,40 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 
         }
         System.err.println("---METHOD END---");
+
+        return 0;
+    }
+
+    public int modifyMethodToPrint() {
+        MethodNode method = staticContextData.getMethodNode();
+        String methodDesc = staticContextData.getMethodNode().desc;
+        InsnList insList = method.instructions;
+
+        System.err.println("Modifying: "
+                + staticContextData.getClassNode().name + "."
+                + methodDesc
+        );
+
+//        Code:
+//        stack=3, locals=3, args_size=2
+//        0: getstatic     #2                  // Field java/lang/System.err:Ljava/io/PrintStream;
+//        3: lload_1
+//        4: invokevirtual #3                  // Method java/io/PrintStream.println:(J)V
+//        7: return
+
+        if (methodDesc.contains("J")) {
+            if (getNbrParams(method) >= 1) {
+                insList.insert(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                        "java/io/PrintStream",
+                        "println",
+                        "(J)V"));
+                insList.insert(new VarInsnNode(Opcodes.LLOAD, 1));
+                insList.insert(new FieldInsnNode(Opcodes.GETSTATIC,
+                        "java/lang/System",
+                        "err",
+                        "Ljava/io/PrintStream;"));
+            }
+        }
 
         return 0;
     }
