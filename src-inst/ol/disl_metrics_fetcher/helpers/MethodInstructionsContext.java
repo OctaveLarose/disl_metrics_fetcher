@@ -51,13 +51,6 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         return loopsNbr;
     }
 
-    public int getNbrParams(MethodNode method) {
-        String paramsStr = method.desc.substring(1, method.desc.indexOf(')'));
-
-        return (int) paramsStr.chars().filter(a -> ((a >= 'A') && (a <= 'Z'))).count() -
-                (int) paramsStr.chars().filter(a -> a == 'L').count();
-    }
-
     public int getNbrLocalVars() {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
@@ -83,7 +76,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 //        System.err.println(method.desc);
 
         // When there are no store calls and there are params, it can be negative
-        return Math.max(0, varIdAccesses.size() - getNbrParams(method));
+        return Math.max(0, varIdAccesses.size() - Utils.getNbrParams(method));
     }
 
 
@@ -124,40 +117,6 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 
         }
         System.err.println("---METHOD END---");
-
-        return 0;
-    }
-
-    public int modifyMethodToPrint() {
-        MethodNode method = staticContextData.getMethodNode();
-        String methodDesc = staticContextData.getMethodNode().desc;
-        InsnList insList = method.instructions;
-
-        System.err.println("Modifying: "
-                + staticContextData.getClassNode().name + "."
-                + methodDesc
-        );
-
-//        Code:
-//        stack=3, locals=3, args_size=2
-//        0: getstatic     #2                  // Field java/lang/System.err:Ljava/io/PrintStream;
-//        3: lload_1
-//        4: invokevirtual #3                  // Method java/io/PrintStream.println:(J)V
-//        7: return
-
-        if (methodDesc.contains("J")) {
-            if (getNbrParams(method) >= 1) {
-                insList.insert(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-                        "java/io/PrintStream",
-                        "println",
-                        "(J)V"));
-                insList.insert(new VarInsnNode(Opcodes.LLOAD, 1));
-                insList.insert(new FieldInsnNode(Opcodes.GETSTATIC,
-                        "java/lang/System",
-                        "err",
-                        "Ljava/io/PrintStream;"));
-            }
-        }
 
         return 0;
     }

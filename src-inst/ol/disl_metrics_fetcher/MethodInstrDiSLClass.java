@@ -12,11 +12,6 @@ public class MethodInstrDiSLClass {
 //        //        dlc.fuckaround();
 //    }
 
-    @Before(marker=BodyMarker.class, guard = NonDefaultGuard.class)
-    static void modifyAllMethods(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
-        dlc.modifyMethodToPrint();
-    }
-
 //    @After(marker=VarInsnMarker.class, guard = NonDefaultGuard.class)
 //    static void aa(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
 //        // Only printing on stderr to get to redirect the program's output elsewhere
