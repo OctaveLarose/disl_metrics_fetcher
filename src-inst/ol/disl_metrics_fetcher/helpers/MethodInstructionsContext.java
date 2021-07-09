@@ -21,7 +21,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         return  "---\n"
                 + JavaNames.methodName(staticContextData.getClassNode().name, method.name) + "\n"
                 + "VARS NBR: " + this.getNbrLocalVars() + "\n"
-                + "LOOPS NBR: " + this.countOpcodes(new ArrayList<>(Opcodes.GOTO)) + "\n"
+                + "LOOPS NBR: " + this.countOpcodes(new ArrayList<>(Collections.singletonList(Opcodes.GOTO))) + "\n"
                 + "ADD INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DADD, Opcodes.FADD, Opcodes.IADD, Opcodes.LADD))) + "\n"
                 + "SUB INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DSUB, Opcodes.FSUB, Opcodes.ISUB, Opcodes.LSUB))) + "\n"
                 + "MUL INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DMUL, Opcodes.FMUL, Opcodes.ISUB, Opcodes.LDIV))) + "\n"
