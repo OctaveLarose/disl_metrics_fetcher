@@ -5,12 +5,12 @@ import ch.usi.dag.disl.staticcontext.MethodStaticContext;
 import disl_metrics_fetcher.helpers.MethodInstructionsContext;
 
 public class MethodInstrDiSLClass {
-//    @After(marker= BodyMarker.class, guard = NonDefaultGuard.class)
-//    static void conMethodExit(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
-//        // Only printing on stderr to get to redirect the program's output elsewhere
-//        System.err.println(dlc.getMethodInstrInfoStr());
-//        //        dlc.fuckaround();
-//    }
+    @After(marker= BodyMarker.class, guard = NonDefaultGuard.class)
+    static void conMethodExit(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
+        // Only printing on stderr to get to redirect the program's output elsewhere
+        System.err.println(dlc.getMethodInstrInfoStr());
+        //        dlc.fuckaround();
+    }
 
 //    @After(marker=VarInsnMarker.class, guard = NonDefaultGuard.class)
 //    static void aa(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {

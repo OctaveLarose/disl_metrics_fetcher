@@ -6,9 +6,7 @@ import org.objectweb.asm.tree.*;
 
 import ch.usi.dag.disl.staticcontext.AbstractStaticContext;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class MethodInstructionsContext extends AbstractStaticContext {
@@ -18,37 +16,33 @@ public class MethodInstructionsContext extends AbstractStaticContext {
 //        System.err.println(staticContextData.getClassNode().interfaces);
 //        System.err.println(staticContextData.getClassNode().superName);
 
+        // Note: for loops, GOTOs are also used for try/catch blocks, I believe, so not entirely accurate?
+        // TODO: how about only counting GOTOs to previous instructions? We need label offsets though and they're not readable
         return  "---\n"
                 + JavaNames.methodName(staticContextData.getClassNode().name, method.name) + "\n"
                 + "VARS NBR: " + this.getNbrLocalVars() + "\n"
-                + "LOOPS NBR: " + this.getLoopsNbr() + "\n"
+                + "LOOPS NBR: " + this.countOpcodes(new ArrayList<>(Opcodes.GOTO)) + "\n"
+                + "ADD INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DADD, Opcodes.FADD, Opcodes.IADD, Opcodes.LADD))) + "\n"
+                + "SUB INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DSUB, Opcodes.FSUB, Opcodes.ISUB, Opcodes.LSUB))) + "\n"
+                + "MUL INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DMUL, Opcodes.FMUL, Opcodes.ISUB, Opcodes.LDIV))) + "\n"
+                + "DIV INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DDIV, Opcodes.FDIV, Opcodes.IDIV, Opcodes.LDIV))) + "\n"
                 + "---";
     }
 
-    public int getLoopsNbr() {
+    public int countOpcodes(List<Integer> opcodes) {
         MethodNode method = staticContextData.getMethodNode();
         InsnList insList = method.instructions;
-        int loopsNbr = 0;
+        int opcodesNbr = 0;
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
 
-            // Note: also used for try/catch blocks, I believe, so not entirely accurate?
-            // TODO: how about only counting GOTOs to previous instructions
-//            System.err.println(instruction);
-            if (instruction.getOpcode() == Opcodes.GOTO) {
-//                if (insList.get(i + 1) instanceof LabelNode)
-//                    try {
-//                        System.err.println(((LabelNode) insList.get(i + 1)).getLabel().getOffset());
-//                    } catch (IllegalStateException e) {
-//                        ; //System.err.println("Illegal state.");
-//                    }
-//                System.err.println(((JumpInsnNode) instruction).label.getLabel().getOffset());
-                loopsNbr++;
+            if (opcodes.contains(instruction.getOpcode())) {
+                opcodesNbr++;
             }
         }
 
-        return loopsNbr;
+        return opcodesNbr;
     }
 
     public int getNbrLocalVars() {
@@ -85,7 +79,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         InsnList insList = method.instructions;
 
         System.err.println("---METHOD " + staticContextData.getClassNode().name + "." + method.name + " START---");
-        System.err.println("MAXLOCALS: " + method.maxLocals);
+//        System.err.println("MAXLOCALS: " + method.maxLocals);
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
