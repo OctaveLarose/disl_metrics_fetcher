@@ -6,18 +6,11 @@ import disl_metrics_fetcher.helpers.MethodInstructionsContext;
 
 public class MethodInstrDiSLClass {
     @After(marker= BodyMarker.class, guard = NonDefaultGuard.class)
-    static void conMethodExit(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
+    static void conMethodExit(MethodInstructionsContext dlc) {
         // Only printing on stderr to get to redirect the program's output elsewhere
-        System.err.println(dlc.getMethodInstrInfoStr());
+        System.err.println(dlc.getOperationOpcodesInOrderStr());
         //        dlc.fuckaround();
     }
-
-//    @After(marker=VarInsnMarker.class, guard = NonDefaultGuard.class)
-//    static void aa(MethodInstructionsContext dlc, MethodStaticContext msc, DynamicContext di) {
-//        // Only printing on stderr to get to redirect the program's output elsewhere
-//        System.err.println(dlc.getMethodInstrInfoStr());
-////        dlc.fuckaround();
-//    }
 
     public static final class NonDefaultGuard {
         @GuardMethod

@@ -15,13 +15,13 @@ public class CTDiSLClass {
     @SyntheticLocal
     static FileWriter logFile;
 
-    static {
-        try {
-            logFile = new FileWriter("logfile.txt", true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    static {
+//        try {
+//            logFile = new FileWriter("logfile.txt", true);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
 //    static void conMethodEntryLog(MethodStaticContextPrinter mscp) {
@@ -34,13 +34,6 @@ public class CTDiSLClass {
 //        }
 //    }
 
-//    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
-//    static void conMethodEntryPrint(MethodStaticContextPrinter mscp) {
-//        System.out.println(mscp.getMethodEntryStr() + "\n");
-//    }
-
-
-
 //    @After (marker=BodyMarker.class, guard = NonDefaultGuard.class)
 //    static void conMethodExitLog(MethodStaticContextPrinter mscp) {
 //        try {
@@ -51,16 +44,21 @@ public class CTDiSLClass {
 //            e.printStackTrace();
 //        }
 //    }
-
+//
+//    @Before (marker=BodyMarker.class, guard = NonDefaultGuard.class)
+//    static void conMethodEntryPrint(MethodStaticContextPrinter mscp) {
+//        System.err.println(mscp.getMethodEntryStr());
+//    }
+//
 //    @After (marker=BodyMarker.class, guard = NonDefaultGuard.class)
 //    static void conMethodExitPrint(MethodStaticContextPrinter mscp) {
-//        System.out.println(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)\n");
+//        System.err.println(mscp.getMethodExitStr() + " (" + (System.nanoTime() - entryTime) + "ns)");
 //    }
 
     public static final class NonDefaultGuard {
         @GuardMethod
         public static boolean isNotDefault(MethodStaticContext context) {
-            String[] blacklist = {"java", "sun", "jdk"};
+            String[] blacklist = {"java", "sun"};
 
             for (String bannedStr: blacklist) {
                 if (context.thisMethodFullName().startsWith(bannedStr))

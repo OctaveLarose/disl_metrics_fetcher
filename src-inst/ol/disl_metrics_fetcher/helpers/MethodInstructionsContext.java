@@ -5,11 +5,21 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import ch.usi.dag.disl.staticcontext.AbstractStaticContext;
+import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceMethodVisitor;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 
 public class MethodInstructionsContext extends AbstractStaticContext {
+    List<Integer> addOpcodes = new ArrayList<>(Arrays.asList(Opcodes.DADD, Opcodes.FADD, Opcodes.IADD, Opcodes.LADD));
+    List<Integer> subOpcodes = new ArrayList<>(Arrays.asList(Opcodes.DSUB, Opcodes.FSUB, Opcodes.ISUB, Opcodes.LSUB));
+    List<Integer> mulOpcodes = new ArrayList<>(Arrays.asList(Opcodes.DMUL, Opcodes.FMUL, Opcodes.IMUL, Opcodes.LMUL));
+    List<Integer> divOpcodes = new ArrayList<>(Arrays.asList(Opcodes.DDIV, Opcodes.FDIV, Opcodes.IDIV, Opcodes.LDIV));
+
     public String getMethodInstrInfoStr() {
         MethodNode method = staticContextData.getMethodNode();
 
@@ -22,11 +32,46 @@ public class MethodInstructionsContext extends AbstractStaticContext {
                 + JavaNames.methodName(staticContextData.getClassNode().name, method.name) + "\n"
                 + "VARS NBR: " + this.getNbrLocalVars() + "\n"
                 + "LOOPS NBR: " + this.countOpcodes(new ArrayList<>(Collections.singletonList(Opcodes.GOTO))) + "\n"
-                + "ADD INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DADD, Opcodes.FADD, Opcodes.IADD, Opcodes.LADD))) + "\n"
-                + "SUB INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DSUB, Opcodes.FSUB, Opcodes.ISUB, Opcodes.LSUB))) + "\n"
-                + "MUL INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DMUL, Opcodes.FMUL, Opcodes.ISUB, Opcodes.LDIV))) + "\n"
-                + "DIV INSTS: " + this.countOpcodes(new ArrayList<>(Arrays.asList(Opcodes.DDIV, Opcodes.FDIV, Opcodes.IDIV, Opcodes.LDIV))) + "\n"
+                + "ADD INSTS: " + this.countOpcodes(addOpcodes) + "\n"
+                + "SUB INSTS: " + this.countOpcodes(subOpcodes) + "\n"
+                + "MUL INSTS: " + this.countOpcodes(mulOpcodes) + "\n"
+                + "DIV INSTS: " + this.countOpcodes(divOpcodes) + "\n"
                 + "---";
+    }
+
+    public String getOperationOpcodesInOrderStr() {
+        MethodNode method = staticContextData.getMethodNode();
+        InsnList insList = method.instructions;
+        StringBuilder infoStr = new StringBuilder();
+
+        infoStr.append("---\n")
+                .append(JavaNames.methodName(staticContextData.getClassNode().name, method.name))
+                .append("\n");
+
+        for (int i = 0; i < insList.size(); i++) {
+            AbstractInsnNode instruction = insList.get(i);
+
+            if (addOpcodes.contains(instruction.getOpcode()) || subOpcodes.contains(instruction.getOpcode()) ||
+                mulOpcodes.contains(instruction.getOpcode()) || divOpcodes.contains(instruction.getOpcode()))
+            {
+                infoStr.append(getOpcodeStr(instruction)).append("\n");
+            }
+        }
+
+        infoStr.append("---");
+
+        return infoStr.toString();
+    }
+
+    public String getOpcodeStr(AbstractInsnNode instruction) {
+        Printer printer = new Textifier();
+        TraceMethodVisitor mp = new TraceMethodVisitor(printer);
+
+        instruction.accept(mp);
+        StringWriter sw = new StringWriter();
+        printer.print(new PrintWriter(sw));
+        printer.getText().clear();
+        return sw.toString().trim();
     }
 
     public int countOpcodes(List<Integer> opcodes) {
@@ -62,7 +107,10 @@ public class MethodInstructionsContext extends AbstractStaticContext {
             // We count store accesses, but maybe most JVM implementations remove unused variables and thus this is inaccurate? Probably not?
             // Doesn't account for exceptions and probably some other cases. TODO check Run.runBenchmark()
             if ((Opcodes.ISTORE <= instr.getOpcode()) && (instr.getOpcode() <= Opcodes.SASTORE))
-                varIdAccesses.add(((VarInsnNode) instr).var);
+                if (!(instr instanceof VarInsnNode))
+                    System.out.println("Not var insn: " + instr); // TODO investigate
+                else
+                    varIdAccesses.add(((VarInsnNode) instr).var);
         }
 
 //        System.err.println(method.attrs);
