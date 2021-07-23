@@ -8,7 +8,10 @@ public class MethodInstrDiSLClass {
     @After(marker= BodyMarker.class, guard = NonDefaultGuard.class)
     static void conMethodExit(MethodInstructionsContext dlc) {
         // Only printing on stderr to get to redirect the program's output elsewhere
-        System.err.println(dlc.getOperationOpcodesInOrderStr());
+        String operationsStr = dlc.getOperationOpcodesInOrderStr();
+
+        if (!operationsStr.equals(""))
+            System.err.println(operationsStr);
         //        dlc.fuckaround();
     }
 

@@ -44,9 +44,7 @@ public class MethodInstructionsContext extends AbstractStaticContext {
         InsnList insList = method.instructions;
         StringBuilder infoStr = new StringBuilder();
 
-        infoStr.append("---\n")
-                .append(JavaNames.methodName(staticContextData.getClassNode().name, method.name))
-                .append("\n");
+        infoStr.append(JavaNames.methodName(staticContextData.getClassNode().name, method.name)).append("\n");
 
         for (int i = 0; i < insList.size(); i++) {
             AbstractInsnNode instruction = insList.get(i);
@@ -54,11 +52,13 @@ public class MethodInstructionsContext extends AbstractStaticContext {
             if (addOpcodes.contains(instruction.getOpcode()) || subOpcodes.contains(instruction.getOpcode()) ||
                 mulOpcodes.contains(instruction.getOpcode()) || divOpcodes.contains(instruction.getOpcode()))
             {
-                infoStr.append(getOpcodeStr(instruction)).append("\n");
+                infoStr.append(getOpcodeStr(instruction)).append(" ");
             }
         }
 
-        infoStr.append("---");
+        // If there are no operations, return an empty string
+        if (infoStr.toString().split("\n").length == 1)
+            return "";
 
         return infoStr.toString();
     }
